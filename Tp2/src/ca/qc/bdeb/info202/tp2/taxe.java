@@ -69,7 +69,7 @@ public class taxe extends Case implements Serializable {
         player.setArgent(argent - loyerS);
     }
 
-    public void menuChoix(Joueur player, Joueur owner, int de, Case casee) {
+    public void effectuerAction(Joueur player, int de) {
         payer(player);
     }
 }

@@ -34,13 +34,14 @@ public class Tp2 {
         debut();
     }
 
-    public static void debut() {
+    public static void debut() { //lancer le jeu
         String[][] plateau = lirePlateau();
         Case[] tabDeJeu = conversion(plateau);
         Partie partie = null;
         Joueur[] tabJoueurs = new Joueur[3];
-        String[][] GrilleC=lirePlateau();
-
+        if (verificationPlateau(plateau)) {
+            System.out.println("Verification du plateau de jeu... ok");
+        }
         Scanner sc = new Scanner(System.in);
         System.out.println("-------MONOPOLY----------");
         System.out.println("1) Charger la partie de sauvegarde\n"
@@ -71,7 +72,7 @@ public class Tp2 {
                 partie.setTabJoueurs(tabJoueurs);
                 break;
             case 2:
-                if(!verificationPlateau(GrilleC)){
+                if (!verificationPlateau(plateau)) {
                     System.out.println("PlateauDeJeu.csv est invalide.");
                     System.exit(0);
                 }
@@ -101,20 +102,20 @@ public class Tp2 {
                 if (nbJoueurs == 1) {
                     System.out.println("Entrez le nom du 1er joueur: ");
                     String nom = sc.nextLine();
-                    player1.nom = nom;
+                    player1.setNom(nom);
                     System.out.println("Entrez le nom du 2e joueur: ");
                     String nom1 = sc.nextLine();
-                    player2.nom = nom1;
+                    player2.setNom(nom1);
                 } else {
                     System.out.println("Entrez le nom du 1er joueur: ");
                     String nom = sc.nextLine();
-                    player1.nom = nom;
+                    player1.setNom(nom);
                     System.out.println("Entrez le nom du 2e joueur: ");
                     String nom1 = sc.nextLine();
-                    player2.nom = nom1;
+                    player2.setNom(nom1);
                     System.out.println("Entrez le nom du 3e joueur:");
                     String nom2 = sc.nextLine();
-                    player3.nom = nom2;
+                    player3.setNom(nom2);
                 }
 
                 Joueur[] tabJoueur = new Joueur[nbJoueurs + 1];
@@ -138,28 +139,34 @@ public class Tp2 {
         partie.demarrage();
     }
 
-    public static void faireSauvegarde(Partie partie) {
-        try ( FileOutputStream FOS = new FileOutputStream("sauvegarde.bin")) {
+    public static void faireSauvegarde(Partie partie) { //sauvegarde la partie dans un fichier nommer sauvegarde.bin
+        try (FileOutputStream FOS = new FileOutputStream("sauvegarde.bin")) {
             ObjectOutputStream OOS = new ObjectOutputStream(FOS);
             OOS.writeObject(partie);
         } catch (IOException e) {
+            System.out.println("Erreur IOException.");
         }
     }
 
-    public static Partie lireSauvegarde() {
+    public static Partie lireSauvegarde() { //lire le fichier savegarde.bin
         Partie partie = null;
-        try ( FileInputStream FIS = new FileInputStream("sauvegarde.bin")) {
+        try (FileInputStream FIS = new FileInputStream("sauvegarde.bin")) {
             ObjectInputStream OIS = new ObjectInputStream(FIS);
 
             partie = (Partie) OIS.readObject();
         } catch (FileNotFoundException e) {
             System.out.println("Aucune sauvegarde retrouver.");
+            System.exit(0);
         } catch (IOException e) {
+            System.out.println("Erreur IOException");
+            System.exit(0);
         } catch (ClassNotFoundException e) {
             System.out.println("Aucune classe retrouver.");
+            System.exit(0);
         }
         return partie;
     }
+
     public static String[][] lirePlateau() { //lit le fichier PlateauDeJeu.csv
         int nbRangers = 0;
         int temp1 = 0;
@@ -182,6 +189,7 @@ public class Tp2 {
                 for (int x = 0; x < Grille.length; x++) {
                     GrilleC[x] = Grille[x].split(",");
                 }
+                System.out.println("Chargement du plateau de jeu... ok");
                 return GrilleC;
             } catch (FileNotFoundException e) {
                 System.out.println("Fichier PlateauDeJeu.csv pas retrouver.");
@@ -190,6 +198,7 @@ public class Tp2 {
         }
         return GrilleC;
     }
+
     public static Case[] conversion(String[][] tab) { //convertit le fichier plateau.csv dans un arraylist de Case
         ArrayList<Case> arrayCase = new ArrayList<Case>();
 
@@ -212,7 +221,8 @@ public class Tp2 {
         }
         return tabDeJeu;
     }
-    public static boolean verificationPlateau(String[][] tab) {
+
+    public static boolean verificationPlateau(String[][] tab) {//verifie si le plateau est valide et retourne boolean
         boolean depart = false, propriete = false, taxe = false, stationnement = false, contient4types = false, premierCase = false;
         for (int i = 0; i < tab.length; i++) {
             if (tab[i][0].contentEquals("D")) {
@@ -248,6 +258,7 @@ public class Tp2 {
         }
         return temporaire;
     }
+
     public static boolean joueurFaillite(Joueur[] tabJoueur) {
         for (int i = 0; i < tabJoueur.length; i++) {
             if (tabJoueur[i].getArgent() < 0) {
@@ -256,7 +267,8 @@ public class Tp2 {
         }
         return false;
     }
-    public static int menu(Joueur player) {
+
+    public static int menu(Joueur player) {//methode pour afficher le menu de choix et retourne le choix du joueur
         Scanner sc = new Scanner(System.in);
         int choix = 0;
         System.out.println("C'est le tour de: " + player.nom());
@@ -281,15 +293,15 @@ public class Tp2 {
         }
         return choix;
     }
-    public static HashMap<Joueur, Integer> sortByValue(HashMap<Joueur, Integer> hm) 
-    { 
-        List<Map.Entry<Joueur, Integer> > list = 
-               new LinkedList<Map.Entry<Joueur, Integer> >(hm.entrySet()); 
-  LinkedHashMap<Joueur, Integer> reverseSortedMap = new LinkedHashMap<>();
-hm.entrySet()
-    .stream()
-    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())) 
-    .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
-        return reverseSortedMap; 
+
+    public static HashMap<Joueur, Integer> sortByValue(HashMap<Joueur, Integer> hm) { //trier le HashMap par values en decroissance (trier la liste de gagnants)
+        List<Map.Entry<Joueur, Integer>> list
+                = new LinkedList<Map.Entry<Joueur, Integer>>(hm.entrySet());
+        LinkedHashMap<Joueur, Integer> reverseSortedMap = new LinkedHashMap<>();
+        hm.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .forEachOrdered(x -> reverseSortedMap.put(x.getKey(), x.getValue()));
+        return reverseSortedMap;
     }
 }

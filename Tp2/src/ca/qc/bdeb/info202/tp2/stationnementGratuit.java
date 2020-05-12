@@ -52,7 +52,7 @@ public class stationnementGratuit extends Case implements Serializable {
         return null;
     }
 
-    public void menuChoix(Joueur player, Joueur owner, int de, Case casee) {
+    public void effectuerAction(Joueur player, int de) {
         System.out.println("Vous avez atterit sur un stationnement gratuit.");
     }
 

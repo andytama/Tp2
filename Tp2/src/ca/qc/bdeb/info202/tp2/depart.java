@@ -53,7 +53,7 @@ public class depart extends Case implements Serializable {
         System.out.println("Votre argent: " + player.getArgent() + "$ (+50$)");
     }
 
-    public void menuChoix(Joueur player, Joueur owner, int de, Case casee) {
+    public void effectuerAction(Joueur player, int de) {
         payer(player);
     }
 

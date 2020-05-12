@@ -75,7 +75,7 @@ public class terrain extends Propriete implements Serializable {
         owner.setArgent(owner.getArgent() + loyer);
     }
 
-    public void menuChoix(Joueur player, Joueur owner, int de, Case casee) {
+    public void effectuerAction(Joueur player, int de) {
         Scanner sc = new Scanner(System.in);
         String acheter = null;
         System.out.println("Vous avez atterit sur la case: " + nom());
@@ -100,7 +100,7 @@ public class terrain extends Propriete implements Serializable {
                     setOwner(player);
                     appartient = true;
                     temp = true;
-                    player.add(casee);
+                    player.add(this);
                 } else if ((acheter.equalsIgnoreCase("o") || acheter.equalsIgnoreCase("oui")) && player.getArgent() <= cout()) {
                     System.out.println("Vous-n'avez pas assez d'argent.");
                     temp = true;

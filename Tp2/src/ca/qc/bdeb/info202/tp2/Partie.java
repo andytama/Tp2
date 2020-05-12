@@ -16,11 +16,11 @@ import java.util.HashMap;
  */
 public class Partie implements Serializable {
 
-    String[][] plateau = Tp2.lirePlateau();
-    Case[] tabDeJeu = Tp2.conversion(plateau);
-    Joueur[] tabJoueurs;
+    private String[][] plateau = Tp2.lirePlateau();
+    private Case[] tabDeJeu = Tp2.conversion(plateau);
+    private Joueur[] tabJoueurs;
 
-    public Partie(Case[] tabDeJeu, Joueur[] tabJoueurs) {
+    public Partie(Case[] tabDeJeu, Joueur[] tabJoueurs) {//constructeur de partie
         this.tabDeJeu = tabDeJeu;
         this.tabJoueurs = tabJoueurs;
     }
@@ -37,7 +37,7 @@ public class Partie implements Serializable {
         this.tabJoueurs = tabJoueurs;
     }
 
-    public void printPlateau(String[][] plateau) {
+    public void printPlateau(String[][] plateau) {//afficher le plateau de string
         for (int i = 0; i < plateau.length; i++) {
             for (int j = 0; j < plateau[i].length; j++) {
                 System.out.print(plateau[i][j] + " ");
@@ -46,7 +46,7 @@ public class Partie implements Serializable {
         }
     }
 
-    public void printCase(Case[] tabJeu) {
+    public void printCase(Case[] tabJeu) {//afficher le tableau final(Case[])
         System.out.println("***************** Les cases   **********************");
         for (int i = 0; i < tabJeu.length; i++) {
             System.out.print(tabJeu[i].position() + ": " + tabJeu[i].nom() + " Cout: " + tabJeu[i].cout() + " Loyer: " + tabJeu[i].loyer() + " Proprietaire: ");
@@ -58,14 +58,14 @@ public class Partie implements Serializable {
         }
     }
 
-    public void printJoueur() {
+    public void printJoueur() {//afficher les joueurs
         System.out.println("***************** Les joueurs **********************");
         for (int i = 0; i < tabJoueurs.length; i++) {
             System.out.println(tabJoueurs[i].nom() + ": est sur la case " + tabJoueurs[i].getCaseJoueur().nom() + ". Argent: " + tabJoueurs[i].getArgent());
         }
     }
 
-    private int montantTotal(Joueur player) {
+    private int montantTotal(Joueur player) {//calcul le montant total d'un jouer incluant ses proprietes
         int montant = 0;
         for (Case i : player.getListProprietes()) {
             montant += i.cout();
@@ -76,10 +76,10 @@ public class Partie implements Serializable {
         return montant;
     }
 
-    public void finir(Joueur[] tabJoueurs) {
-        HashMap<Joueur,Integer> a = leaderboard(tabJoueurs);
+    public void finir(Joueur[] tabJoueurs) {//termine le jeu et affiche le leaderboard
+        HashMap<Joueur, Integer> a = leaderboard(tabJoueurs);
         System.out.println("Leaderboard: ");
-        int k=0;
+        int k = 0;
         for (Joueur i : a.keySet()) {
             System.out.println("#" + (k + 1) + " : " + i.nom() + " Valeur totale: " + a.get(i) + "$");
             k++;
@@ -88,46 +88,16 @@ public class Partie implements Serializable {
         System.exit(0);
     }
 
-    public HashMap<Joueur,Integer> leaderboard(Joueur[] tabJoueurs) {
-        HashMap<Joueur,Integer> a = new HashMap<Joueur,Integer>();
+    public HashMap<Joueur, Integer> leaderboard(Joueur[] tabJoueurs) {//lors du terminage du jeu, classer les joueurs selon leur montant d'argent total
+        HashMap<Joueur, Integer> a = new HashMap<Joueur, Integer>();
         for (int i = 0; i < tabJoueurs.length; i++) {
             a.put(tabJoueurs[i], montantTotal(tabJoueurs[i]));
         }
-    HashMap<Joueur,Integer> b = Tp2.sortByValue(a);
+        HashMap<Joueur, Integer> b = Tp2.sortByValue(a);
         return b;
     }
 
-    public int[] survoler(int depart, int fin, Case[] tabJeu, int de) {
-        ArrayList<Integer> caseSurvoler = new ArrayList<Integer>();
-
-        if (fin > depart) {
-            for (int i = depart + 1; i < fin; i++) {
-                if (i >= 10) {
-                    i = 0;
-                }
-                caseSurvoler.add(i);
-            }
-        } else {
-
-            int temp1 = depart + 1;
-            for (int i = depart + 1; i < depart + de - 1; i++) {
-
-                caseSurvoler.add(temp1);
-                if (temp1 == tabJeu.length - 1) {
-                    temp1 = 0;
-                    caseSurvoler.add(0);
-                }
-                temp1++;
-            }
-        }
-        int[] tabCS = new int[caseSurvoler.size()];
-        for (int i = 0; i < caseSurvoler.size(); i++) {
-            tabCS[i] = caseSurvoler.get(i);
-        }
-        return tabCS;
-    }
-
-    public void demarrage() {
+    public void demarrage() {//demarrer le jeu
         Scanner sc = new Scanner(System.in);
         int[] pos = new int[tabJoueurs.length];
         int i = 0;
@@ -151,11 +121,11 @@ public class Partie implements Serializable {
                     tabJoueurs[i].setPos(pos[i]);
                     tabJoueurs[i].setCaseJoueur(tabDeJeu[pos[i]]);
                 }
-                int temporaire = pos[i] - de;
-                if (temporaire < 0) {
-                    temporaire = temporaire + 10;
+                int positionInitiale = pos[i] - de;
+                if (positionInitiale < 0) {
+                    positionInitiale = positionInitiale + tabDeJeu.length;
                 }
-                int[] temp = survoler(temporaire, pos[i], tabDeJeu, de);
+                int[] temp = indexDesCasesSurvoler(positionInitiale, de, tabDeJeu);
                 for (int j = 0; j < temp.length - 1; j++) {
                     int index = temp[j];
                     try {
@@ -163,7 +133,7 @@ public class Partie implements Serializable {
                     } catch (ArrayIndexOutOfBoundsException e) {
                     }
                 }
-                tabDeJeu[pos[i]].menuChoix(tabJoueurs[i], tabDeJeu[pos[i]].owner(), de, tabDeJeu[pos[i]]);
+                tabDeJeu[pos[i]].effectuerAction(tabJoueurs[i], de);
             }
             i++;
             if (i >= tabJoueurs.length) {
@@ -182,5 +152,33 @@ public class Partie implements Serializable {
         if (action == 3) {
             finir(tabJoueurs);
         }
+    }
+
+    public String toString() {//afficher l'etat du jeu(le plateau et les joueurs)
+        String listeJoueurs = "**********Les Joueurs***********";
+        for (Joueur player : tabJoueurs) {
+            listeJoueurs += "\n" + player.nom() + " est sur la case " + player.getCaseJoueur().nom() + " et possede " + player.getArgent() + "$\n";
+        }
+        String listeCase = "***********Les Cases***************";
+        for (int i = 0; i < tabDeJeu.length; i++) {
+            listeCase += i + ": " + tabDeJeu[i].nom() + "\n";
+            Joueur proprietaire = ((Propriete) (tabDeJeu[i])).owner();
+            if (proprietaire == null) {
+                listeCase += "Proprietaire : aucun\n";
+            } else {
+                listeCase += "Proprietaire : " + proprietaire.nom() + "\n";
+            }
+        }
+        return listeJoueurs + listeCase;
+    }
+
+    public int[] indexDesCasesSurvoler(int depart, int de, Case[] tabDeJeu) {//retourne les index que le jouer a survoler, sans atterir
+        int[] tabDesIndex = new int[de];
+        int j = 0;
+        for (int i = depart + 1; i <= (de + depart); i++) {
+            tabDesIndex[j] = (i % (tabDeJeu.length));
+            j++;
+        }
+        return tabDesIndex;
     }
 }

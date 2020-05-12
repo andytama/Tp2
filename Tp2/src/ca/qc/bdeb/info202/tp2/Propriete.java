@@ -25,7 +25,7 @@ abstract public class Propriete extends Case {
 
     abstract Joueur owner();
 
-    abstract public void menuChoix(Joueur player, Joueur owner, int de, Case casee);//methode effectuerAction-----------------------------------------------------------
+    abstract public void effectuerAction(Joueur player, int de);//methode effectuerAction
 
     abstract public void survoler(Joueur player); //methode survolerCase----------------------------------------------------------------------------------------------------
 }

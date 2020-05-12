@@ -14,12 +14,12 @@ import java.util.ArrayList;
  */
 public class Joueur implements Serializable {
 
-    String nom;
-    int numeroDeJoueur;
-    int argent = 400;
-    int pos = 2;
+    private String nom;
+    private int numeroDeJoueur;
+    private int argent = 400;
+    private int pos;
     private Case caseJoueur;
-    int valeurTotal;
+    private int valeurTotal;
     private ArrayList<Case> listProprietes = new ArrayList<Case>();
 
     public Joueur(String nom, int numeroDeJoueur, int pos, Case caseJoueur) {
@@ -52,7 +52,9 @@ public class Joueur implements Serializable {
     public String nom() {
         return nom;
     }
-
+    public void setNom(String nom){
+        this.nom=nom;
+    }
     public int getPos() {
         return pos;
     }

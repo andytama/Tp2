@@ -27,7 +27,7 @@ abstract class Case implements Serializable {
 
     abstract Joueur owner();
 
-    abstract public void menuChoix(Joueur player, Joueur owner, int de, Case casee);//methode effectuerAction-----------------------------------------------------------
+    abstract public void effectuerAction(Joueur player, int de);
 
     abstract public void survoler(Joueur player); //methode survolerCase----------------------------------------------------------------------------------------------------
 }

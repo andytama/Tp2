@@ -80,7 +80,7 @@ public class servicePublic extends Propriete implements Serializable {
         owner.setArgent(owner.getArgent() + loyerS);
     }
 
-    public void menuChoix(Joueur player, Joueur owner, int De, Case casee) {
+    public void effectuerAction(Joueur player, int De) {
         Scanner sc = new Scanner(System.in);
         System.out.println("Vous avez atterit sur la case: " + nom());
         if (appartient) {
@@ -96,6 +96,7 @@ public class servicePublic extends Propriete implements Serializable {
                     setOwner(player);
                     appartient = true;
                     temp = true;
+                    player.add(this);
                 } else if ((acheter.equalsIgnoreCase("o") || acheter.equalsIgnoreCase("oui")) && player.getArgent() <= cout()) {
                     System.out.println("Vous-n'avez pas assez d'argent.");
                     temp = true;
